@@ -6,13 +6,17 @@ Run: python3 producer_allowed.py
 
 from confluent_kafka import Producer
 import sys, time
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+CERT_DIR = BASE_DIR / "security" / "certs"
 
 conf = {
     "bootstrap.servers": "localhost:9093",  # adjust if broker runs on another host
     "security.protocol": "SSL",
-    "ssl.ca.location": "../security/certs/ca.crt",
-    "ssl.certificate.location": "../security/certs/client.crt",
-    "ssl.key.location": "../security/certs/client.key",
+    "ssl.ca.location": str(CERT_DIR / "ca.crt"),
+    "ssl.certificate.location": str(CERT_DIR / "client.crt"),
+    "ssl.key.location": str(CERT_DIR / "client.key"),
     "ssl.endpoint.identification.algorithm": "none",  # disable hostname verification for local SAN mismatch
 }
 
