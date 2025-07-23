@@ -35,7 +35,11 @@ openssl pkcs12 -export -in kafka.crt -inkey kafka.key -name kafka-broker \
 # Convert RSA key to PKCS8 (unencrypted) for Envoy compatibility
 echo "[generate-certs] Converting server key to PKCS8 for Envoy..."
 mv kafka.key kafka_rsa.key
-openssl pkcs8 -topk8 -nocrypt -in kafka_rsa.key -out kafka.key
+# Convert to PKCS8 PEM explicitly (-outform PEM) and verify
+openssl pkcs8 -topk8 -nocrypt -in kafka_rsa.key -out kafka.key -outform PEM
+
+# Quick sanity check to ensure key is valid PEM
+openssl pkey -in kafka.key -noout >/dev/null 2>&1 || { echo "[generate-certs] ERROR: generated kafka.key is invalid"; exit 1; }
 
 # Import CA into truststore
 keytool -import -noprompt -alias CARoot -file ca.crt \
