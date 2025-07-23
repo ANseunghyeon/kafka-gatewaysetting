@@ -13,6 +13,7 @@ conf = {
     "ssl.ca.location": "../security/certs/ca.crt",
     "ssl.certificate.location": "../security/certs/client.crt",
     "ssl.key.location": "../security/certs/client.key",
+    "ssl.endpoint.identification.algorithm": "none",  # disable hostname verification for local SAN mismatch
 }
 
 topic = "custA.test"

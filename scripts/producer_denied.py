@@ -11,6 +11,7 @@ conf = {
     "security.protocol": "SSL",
     "ssl.ca.location": "../security/certs/ca.crt",
     # Intentionally omitting ssl.certificate.location and ssl.key.location
+    "ssl.endpoint.identification.algorithm": "none",
 }
 
 topic = "custA.test"

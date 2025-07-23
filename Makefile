@@ -30,3 +30,9 @@ run-allowed:
 
 run-denied:
 	python3 scripts/producer_denied.py 
+
+run-consumer-allowed:
+	python3 scripts/consumer_allowed.py
+
+run-consumer-denied:
+	python3 scripts/consumer_denied.py 

@@ -23,7 +23,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: SSL:SSL
       KAFKA_LISTENERS: SSL://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: SSL://kafka-proxy:9093
+      # Broker now advertises itself, Envoy will rewrite to external address
+      KAFKA_ADVERTISED_LISTENERS: SSL://kafka-broker:9093
       KAFKA_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
       KAFKA_SSL_KEYSTORE_CREDENTIALS: keystore_creds
       KAFKA_SSL_KEY_CREDENTIALS: key_creds
@@ -39,14 +40,16 @@ services:
     command: ["bash", "-c", "/etc/confluent/docker/run"] 
 
   kafka-proxy:
-    image: nginx:1.25-alpine
+    image: envoyproxy/envoy-contrib:v1.31-latest
     container_name: kafka-proxy
     depends_on:
       - kafka
     ports:
-      - "9093:9093"  # external entrypoint, forwards to kafka:9093
+      - "9093:9093"  # expose Envoy listener to host
     volumes:
-      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/envoy/envoy.yaml:/etc/envoy/envoy.yaml:ro
+      - ./security/certs:/etc/kafka/secrets:ro
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--log-level", "info"]
     networks:
       - default
 
