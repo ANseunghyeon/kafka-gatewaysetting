@@ -12,7 +12,7 @@ up: certs
 restart: down up
 
 down:
-	docker-compose down
+	docker compose down
 
 # Example: make acls PRINCIPAL=customerA TOPIC=custA.*
 acls:
