@@ -32,6 +32,11 @@ openssl x509 -req -in kafka.csr -CA ca.crt -CAkey ca.key -CAcreateserial \
 openssl pkcs12 -export -in kafka.crt -inkey kafka.key -name kafka-broker \
   -out kafka.p12 -password pass:$PASSWORD -CAfile ca.crt -caname CARoot
 
+# Convert RSA key to PKCS8 (unencrypted) for Envoy compatibility
+echo "[generate-certs] Converting server key to PKCS8 for Envoy..."
+mv kafka.key kafka_rsa.key
+openssl pkcs8 -topk8 -nocrypt -in kafka_rsa.key -out kafka.key
+
 # Import CA into truststore
 keytool -import -noprompt -alias CARoot -file ca.crt \
   -keystore kafka.truststore.jks -storepass $PASSWORD
